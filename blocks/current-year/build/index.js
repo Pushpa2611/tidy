@@ -1,0 +1,1 @@
+(()=>{"use strict";const e=window.wp.blocks,t=JSON.parse('{"UU":"tidy/current-year"}'),n=window.ReactJSXRuntime;(0,e.registerBlockType)(t.UU,{edit:function(){const e=(new Date).getFullYear();return(0,n.jsx)("p",{children:e})},save:()=>null})})();

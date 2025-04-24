@@ -1,0 +1,9 @@
+{
+    "apiVersion": 2,
+    "name": "tidy/current-year",
+    "title": "Current Year",
+    "category": "text",
+    "description": "Displays the current year",
+    "textdomain": "tidy",
+    "editorScript": "file:./build/index.js"
+  }
