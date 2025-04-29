@@ -11,11 +11,11 @@ const FIELD_TYPES = [
     { label: 'Checkbox', value: 'checkbox' },
     { label: 'Radio', value: 'radio' },
     { label: 'Range', value: 'range' },
-    { label: 'File', value: 'file' }
+    { label: 'File Upload', value: 'file' }
 ];
 
 export default function Edit({ attributes, setAttributes }) {
-    const { formId, formClass, formAction, formMethod, fields, submitText } = attributes;
+    const { formId, formClass, formMethod, fields, submitText } = attributes;
     const [activeFieldIndex, setActiveFieldIndex] = useState(null);
 
     const updateField = (index, property, value) => {
@@ -65,7 +65,9 @@ export default function Edit({ attributes, setAttributes }) {
     const renderFieldPreview = (field, index) => {
         const baseClasses = field.type === 'checkbox' || field.type === 'radio'
             ? 'form-check-input'
-            : 'form-control';
+            : field.type === 'file'
+                ? 'form-control'
+                : 'form-control';
 
         const fieldClasses = `${baseClasses} ${field.class || ''}`.trim();
 
@@ -121,12 +123,22 @@ export default function Edit({ attributes, setAttributes }) {
                         })}
                     </div>
                 );
-
             case 'range':
                 return (
                     <input
                         type="range"
                         className={`form-range ${field.class || ''}`.trim()}
+                        id={field.id}
+                        name={field.name}
+                        required={field.required}
+                        disabled
+                    />
+                );
+            case 'file':
+                return (
+                    <input
+                        type="file"
+                        className={fieldClasses}
                         id={field.id}
                         name={field.name}
                         required={field.required}
@@ -163,7 +175,6 @@ export default function Edit({ attributes, setAttributes }) {
                         onChange={(value) => setAttributes({ formClass: value })}
                         placeholder="space-separated classes"
                     />
-
                     <SelectControl
                         label="Form Method"
                         value={formMethod}
@@ -222,7 +233,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 onChange={(value) => updateField(index, 'class', value)}
                                 placeholder="form-control additional-class"
                             />
-                            {field.type !== 'checkbox' && field.type !== 'radio' && (
+                            {field.type !== 'checkbox' && field.type !== 'radio' && field.type !== 'file' && (
                                 <TextControl
                                     label="Placeholder"
                                     value={field.placeholder}
@@ -282,7 +293,7 @@ export default function Edit({ attributes, setAttributes }) {
                 </PanelBody>
             </InspectorControls>
 
-            <form className={`${formClass}`.trim()} id={formId}>
+            <form className={`${formClass}`.trim()} id={formId} encType="multipart/form-data">
                 {fields.map((field, index) => (
                     <div key={index} className="mb-3">
                         {(field.type !== 'checkbox' && field.type !== 'radio') && (

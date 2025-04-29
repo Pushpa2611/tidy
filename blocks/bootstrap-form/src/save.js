@@ -1,7 +1,7 @@
 import { useBlockProps } from '@wordpress/block-editor';
 
 export default function Save({ attributes }) {
-    const { formId, formClass, formAction, formMethod, fields, submitText, successMessage } = attributes;
+    const { formId, formClass, formMethod, fields, submitText, successMessage } = attributes;
     const blockProps = useBlockProps.save();
 
     const renderField = (field) => {
@@ -42,6 +42,8 @@ export default function Save({ attributes }) {
                 );
             case 'range':
                 return <input type="range" className={fieldClasses} id={field.id} name={field.name} required={field.required} />;
+            case 'file':
+                return <input type="file" className={fieldClasses} id={field.id} name={field.name} required={field.required} />;
             default:
                 return <input type={field.type} className={fieldClasses} id={field.id} name={field.name} placeholder={field.placeholder || ''} required={field.required} />;
         }
@@ -53,6 +55,7 @@ export default function Save({ attributes }) {
                 className={`tidy-form ${formClass || ''}`.trim()}
                 id={formId}
                 method={formMethod}
+                encType="multipart/form-data"
                 data-success-message={successMessage}
             >
                 <input type="hidden" name="tidy_form_id" value={formId} />

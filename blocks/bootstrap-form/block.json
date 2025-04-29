@@ -4,7 +4,7 @@
     "title": "Bootstrap Form",
     "category": "design",
     "icon": "feedback",
-    "description": "A form block with submission tracking.",
+    "description": "A form block with submission tracking and file uploads.",
     "attributes": {
         "formId": {
             "type": "string",
@@ -33,5 +33,8 @@
     },
     "editorScript": "file:./build/index.js",
     "editorStyle": "file:./editor.css",
-    "style": "file:./style.css"
+    "style": "file:./style.css",
+    "supports": {
+        "html": false
+    }
 }

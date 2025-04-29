@@ -10,6 +10,9 @@ jQuery(document).ready(function ($) {
         // Add the action parameter
         formData.append('action', 'tidy_forms_submit');
 
+        // Show loading state
+        $form.find('button[type="submit"]').prop('disabled', true).html('<span class="spinner is-active"></span> Processing...');
+
         $.ajax({
             type: $form.attr('method'),
             url: tidyForms.ajaxurl,
@@ -22,12 +25,23 @@ jQuery(document).ready(function ($) {
                     $message.addClass('alert alert-success')
                         .text(response.data.message)
                         .fadeIn();
+                } else {
+                    $message.addClass('alert alert-danger')
+                        .text(response.data.message || 'Submission failed')
+                        .fadeIn();
                 }
             },
-            error: function () {
+            error: function (xhr) {
+                let errorMessage = 'An error occurred. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                    errorMessage = xhr.responseJSON.data.message;
+                }
                 $message.addClass('alert alert-danger')
-                    .text('An error occurred. Please try again.')
+                    .text(errorMessage)
                     .fadeIn();
+            },
+            complete: function () {
+                $form.find('button[type="submit"]').prop('disabled', false).text($form.data('submit-text') || 'Submit');
             }
         });
     });
