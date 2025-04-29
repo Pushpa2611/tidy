@@ -1,108 +1,80 @@
 import { useBlockProps } from '@wordpress/block-editor';
 
 export default function Save({ attributes }) {
-    const { formId, formMethod, formAction, formLayout, formFields, submitText } = attributes;
+    const { formId, formClass, formAction, formMethod, fields, submitText, successMessage } = attributes;
     const blockProps = useBlockProps.save();
 
     const renderField = (field) => {
-        const commonProps = {
-            name: field.name,
-            id: field.id,
-            required: field.required,
-            placeholder: field.placeholder || '',
-            className: `form-control ${formLayout === 'floating' ? 'placeholder-transparent' : ''}`
-        };
+        const baseClasses = field.type === 'checkbox' || field.type === 'radio'
+            ? 'form-check-input'
+            : field.type === 'range'
+                ? 'form-range'
+                : 'form-control';
+
+        const fieldClasses = `${baseClasses} ${field.class || ''}`.trim();
 
         switch (field.type) {
             case 'textarea':
-                return <textarea {...commonProps} rows="3"></textarea>;
+                return <textarea className={fieldClasses} id={field.id} name={field.name} placeholder={field.placeholder || ''} required={field.required} />;
             case 'select':
+                const options = field.options ? field.options.split('\n').map(option => {
+                    const [value, label] = option.includes(':') ? option.split(':') : [option.trim(), option.trim()];
+                    return { value: value.trim(), label: label.trim() };
+                }) : [];
+
                 return (
-                    <select {...commonProps}>
-                        {field.options?.map((opt, i) => (
+                    <select className={fieldClasses} id={field.id} name={field.name} required={field.required}>
+                        <option value="">{field.placeholder || 'Select an option'}</option>
+                        {options.map((opt, i) => (
                             <option key={i} value={opt.value}>{opt.label}</option>
                         ))}
                     </select>
                 );
             case 'checkbox':
+            case 'radio':
                 return (
                     <div className="form-check">
-                        <input
-                            type="checkbox"
-                            className="form-check-input"
-                            id={`${field.id}_1`}
-                            name={field.name}
-                        />
-                        <label className="form-check-label" htmlFor={`${field.id}_1`}>
-                            {field.options?.[0]?.label || 'Option 1'}
+                        <label className="form-check-label">
+                            <input type={field.type} className={fieldClasses} id={field.id} name={field.name} required={field.required} />
+                            {field.label}
                         </label>
                     </div>
                 );
-            case 'radio':
-                return (
-                    <div>
-                        {field.options?.map((opt, i) => (
-                            <div key={i} className="form-check">
-                                <input
-                                    type="radio"
-                                    className="form-check-input"
-                                    id={`${field.id}_${i}`}
-                                    name={field.name}
-                                    value={opt.value}
-                                />
-                                <label className="form-check-label" htmlFor={`${field.id}_${i}`}>
-                                    {opt.label}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
-                );
             case 'range':
-                return <input type="range" className="form-range" id={field.id} name={field.name} />;
-            case 'file':
-                return <input type="file" className="form-control" id={field.id} name={field.name} />;
+                return <input type="range" className={fieldClasses} id={field.id} name={field.name} required={field.required} />;
             default:
-                return <input type={field.type} {...commonProps} />;
+                return <input type={field.type} className={fieldClasses} id={field.id} name={field.name} placeholder={field.placeholder || ''} required={field.required} />;
         }
     };
 
     return (
         <div {...blockProps}>
             <form
+                className={`tidy-form ${formClass || ''}`.trim()}
                 id={formId}
                 method={formMethod}
-                action={formAction || '#'}
-                className={`needs-validation ${formLayout === 'horizontal' ? 'row g-3' : ''}`}
-                noValidate
+                data-success-message={successMessage}
             >
-                {formFields.map((field) => (
-                    <div key={field.id} className={`mb-3 ${formLayout === 'horizontal' ? 'col-md-6' : ''}`}>
-                        {formLayout === 'floating' ? (
-                            <div className="form-floating">
-                                {renderField(field)}
-                                <label htmlFor={field.id}>
-                                    {field.label}{field.required && <span className="text-danger">*</span>}
-                                </label>
-                            </div>
-                        ) : (
-                            <>
-                                <label htmlFor={field.id} className={`form-label ${formLayout === 'horizontal' ? 'col-form-label' : ''}`}>
-                                    {field.label}{field.required && <span className="text-danger">*</span>}
-                                </label>
-                                {renderField(field)}
-                            </>
+                <input type="hidden" name="tidy_form_id" value={formId} />
+                <input type="hidden" name="success_message" value={successMessage} />
+
+                {fields.map((field, index) => (
+                    <div key={index} className="mb-3">
+                        {(field.type !== 'checkbox' && field.type !== 'radio') && (
+                            <label htmlFor={field.id} className="form-label">
+                                {field.label}
+                                {field.required && <span className="text-danger">*</span>}
+                            </label>
                         )}
-                        {field.helpText && (
-                            <div className="form-text">{field.helpText}</div>
-                        )}
+                        {renderField(field)}
                     </div>
                 ))}
 
-                <div className="mb-3">
-                    <button type="submit" className="btn btn-primary">
-                        {submitText}
-                    </button>
-                </div>
+                <div className="form-message" style={{ display: 'none' }}></div>
+
+                <button type="submit" className="btn btn-primary">
+                    {submitText}
+                </button>
             </form>
         </div>
     );

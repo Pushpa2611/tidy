@@ -1,7 +1,6 @@
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, SelectControl, ToggleControl, Button } from '@wordpress/components';
+import { PanelBody, Button, TextControl, SelectControl, ToggleControl, TextareaControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { v4 as uuidv4 } from 'uuid';
 
 const FIELD_TYPES = [
     { label: 'Text', value: 'text' },
@@ -15,129 +14,163 @@ const FIELD_TYPES = [
     { label: 'File', value: 'file' }
 ];
 
-const LAYOUT_OPTIONS = [
-    { label: 'Vertical', value: 'vertical' },
-    { label: 'Horizontal', value: 'horizontal' },
-    { label: 'Floating Labels', value: 'floating' }
-];
-
 export default function Edit({ attributes, setAttributes }) {
-    const { formId, formMethod, formAction, formLayout, formFields, submitText } = attributes;
-    const [selectedField, setSelectedField] = useState(null);
-    const [expandedPanel, setExpandedPanel] = useState('form-settings');
-
-    // Generate form ID if not set
-    if (!formId) {
-        setAttributes({ formId: 'form-' + uuidv4().substring(0, 8) });
-    }
-
-    const addField = () => {
-        const newField = {
-            id: uuidv4(),
-            type: 'text',
-            label: 'New Field',
-            name: 'field_' + (formFields.length + 1),
-            required: false,
-            placeholder: '',
-            helpText: '',
-            options: []
-        };
-        setAttributes({ formFields: [...formFields, newField] });
-        setSelectedField(formFields.length);
-    };
+    const { formId, formClass, formAction, formMethod, fields, submitText } = attributes;
+    const [activeFieldIndex, setActiveFieldIndex] = useState(null);
 
     const updateField = (index, property, value) => {
-        const newFields = [...formFields];
+        const newFields = [...fields];
         newFields[index] = { ...newFields[index], [property]: value };
-        setAttributes({ formFields: newFields });
+        setAttributes({ fields: newFields });
+    };
+
+    const addField = () => {
+        const fieldNumber = fields.length + 1;
+        const newField = {
+            type: 'text',
+            label: `Field ${fieldNumber}`,
+            name: `field_${fieldNumber}`,
+            id: `field-${fieldNumber}`,
+            class: 'form-control',
+            placeholder: '',
+            required: false,
+            options: ''
+        };
+
+        setAttributes({
+            fields: [...fields, newField]
+        });
+        setActiveFieldIndex(fields.length);
     };
 
     const removeField = (index) => {
-        const newFields = formFields.filter((_, i) => i !== index);
-        setAttributes({ formFields: newFields });
-        if (selectedField >= index) {
-            setSelectedField(Math.max(0, selectedField - 1));
+        const newFields = fields.filter((_, i) => i !== index);
+        setAttributes({ fields: newFields });
+        if (activeFieldIndex >= index) {
+            setActiveFieldIndex(Math.max(0, activeFieldIndex - 1));
         }
     };
 
-    const moveField = (index, direction) => {
-        if ((direction === 'up' && index === 0) || (direction === 'down' && index === formFields.length - 1)) {
-            return;
-        }
-        const newFields = [...formFields];
-        const newIndex = direction === 'up' ? index - 1 : index + 1;
-        [newFields[index], newFields[newIndex]] = [newFields[newIndex], newFields[index]];
-        setAttributes({ formFields: newFields });
-        setSelectedField(newIndex);
+    const moveField = (fromIndex, toIndex) => {
+        if (toIndex < 0 || toIndex >= fields.length) return;
+
+        const newFields = [...fields];
+        const [movedField] = newFields.splice(fromIndex, 1);
+        newFields.splice(toIndex, 0, movedField);
+
+        setAttributes({ fields: newFields });
+        setActiveFieldIndex(toIndex);
     };
 
-    const renderFieldInput = (field, index) => {
-        const commonProps = {
-            className: `form-control ${formLayout === 'floating' ? 'placeholder-transparent' : ''}`,
-            placeholder: field.placeholder || '',
-            required: field.required,
-            disabled: true // Disable actual interaction in editor
-        };
+    const renderFieldPreview = (field, index) => {
+        const baseClasses = field.type === 'checkbox' || field.type === 'radio'
+            ? 'form-check-input'
+            : 'form-control';
+
+        const fieldClasses = `${baseClasses} ${field.class || ''}`.trim();
 
         switch (field.type) {
             case 'textarea':
-                return <textarea {...commonProps} rows="3"></textarea>;
+                return (
+                    <textarea
+                        className={fieldClasses}
+                        id={field.id}
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                        disabled
+                    />
+                );
             case 'select':
                 return (
-                    <select {...commonProps}>
-                        {field.options?.map((opt, i) => (
-                            <option key={i} value={opt.value}>{opt.label}</option>
-                        ))}
+                    <select
+                        className={fieldClasses}
+                        id={field.id}
+                        name={field.name}
+                        required={field.required}
+                        disabled
+                    >
+                        {(field.options || '').split('\n').map((opt, idx) => {
+                            const [val, label] = opt.includes(':') ? opt.split(':') : [opt, opt];
+                            return <option key={idx} value={val}>{label}</option>;
+                        })}
                     </select>
                 );
-            case 'checkbox':
             case 'radio':
+            case 'checkbox':
                 return (
-                    <div className="form-check">
-                        <input
-                            type={field.type}
-                            className="form-check-input"
-                            disabled={true}
-                        />
-                        <label className="form-check-label">Option 1</label>
+                    <div>
+                        {(field.options || field.label).split('\n').map((opt, idx) => {
+                            const [val, label] = opt.includes(':') ? opt.split(':') : [opt, opt];
+                            const fieldId = `${field.id}_${idx}`;
+                            return (
+                                <div className="form-check" key={idx}>
+                                    <input
+                                        type={field.type}
+                                        className={fieldClasses}
+                                        id={fieldId}
+                                        name={field.name}
+                                        value={val}
+                                        disabled
+                                    />
+                                    <label className="form-check-label" htmlFor={fieldId}>
+                                        {label}
+                                    </label>
+                                </div>
+                            );
+                        })}
                     </div>
                 );
+
             case 'range':
-                return <input type="range" className="form-range" disabled={true} />;
+                return (
+                    <input
+                        type="range"
+                        className={`form-range ${field.class || ''}`.trim()}
+                        id={field.id}
+                        name={field.name}
+                        required={field.required}
+                        disabled
+                    />
+                );
             default:
-                return <input type={field.type} {...commonProps} />;
+                return (
+                    <input
+                        type={field.type}
+                        className={fieldClasses}
+                        id={field.id}
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                        disabled
+                    />
+                );
         }
     };
 
     return (
         <div {...useBlockProps()}>
             <InspectorControls>
-                <PanelBody title="Form Settings" initialOpen={expandedPanel === 'form-settings'} onToggle={() => setExpandedPanel(expandedPanel === 'form-settings' ? null : 'form-settings')}>
+                <PanelBody title="Form Settings">
                     <TextControl
                         label="Form ID"
                         value={formId}
                         onChange={(value) => setAttributes({ formId: value })}
                     />
+                    <TextControl
+                        label="Form Classes"
+                        value={formClass}
+                        onChange={(value) => setAttributes({ formClass: value })}
+                        placeholder="space-separated classes"
+                    />
+
                     <SelectControl
                         label="Form Method"
                         value={formMethod}
                         options={[
-                            { label: 'POST', value: 'post' },
-                            { label: 'GET', value: 'get' }
+                            { label: 'POST', value: 'post' }
                         ]}
                         onChange={(value) => setAttributes({ formMethod: value })}
-                    />
-                    <TextControl
-                        label="Form Action (URL)"
-                        value={formAction}
-                        onChange={(value) => setAttributes({ formAction: value })}
-                        placeholder="Leave empty for current page"
-                    />
-                    <SelectControl
-                        label="Form Layout"
-                        value={formLayout}
-                        options={LAYOUT_OPTIONS}
-                        onChange={(value) => setAttributes({ formLayout: value })}
                     />
                     <TextControl
                         label="Submit Button Text"
@@ -146,7 +179,7 @@ export default function Edit({ attributes, setAttributes }) {
                     />
                 </PanelBody>
 
-                <PanelBody title="Form Fields" initialOpen={expandedPanel === 'form-fields'} onToggle={() => setExpandedPanel(expandedPanel === 'form-fields' ? null : 'form-fields')}>
+                <PanelBody title="Form Fields">
                     <Button
                         variant="primary"
                         onClick={addField}
@@ -155,12 +188,12 @@ export default function Edit({ attributes, setAttributes }) {
                         Add New Field
                     </Button>
 
-                    {formFields.map((field, index) => (
+                    {fields.map((field, index) => (
                         <PanelBody
-                            key={field.id}
+                            key={index}
                             title={field.label || `Field ${index + 1}`}
-                            initialOpen={selectedField === index}
-                            onToggle={() => setSelectedField(selectedField === index ? null : index)}
+                            initialOpen={activeFieldIndex === index}
+                            onToggle={() => setActiveFieldIndex(activeFieldIndex === index ? null : index)}
                         >
                             <SelectControl
                                 label="Field Type"
@@ -179,108 +212,88 @@ export default function Edit({ attributes, setAttributes }) {
                                 onChange={(value) => updateField(index, 'name', value)}
                             />
                             <TextControl
-                                label="Placeholder"
-                                value={field.placeholder}
-                                onChange={(value) => updateField(index, 'placeholder', value)}
+                                label="Field ID"
+                                value={field.id}
+                                onChange={(value) => updateField(index, 'id', value)}
                             />
                             <TextControl
-                                label="Help Text"
-                                value={field.helpText}
-                                onChange={(value) => updateField(index, 'helpText', value)}
+                                label="Field Classes"
+                                value={field.class}
+                                onChange={(value) => updateField(index, 'class', value)}
+                                placeholder="form-control additional-class"
                             />
+                            {field.type !== 'checkbox' && field.type !== 'radio' && (
+                                <TextControl
+                                    label="Placeholder"
+                                    value={field.placeholder}
+                                    onChange={(value) => updateField(index, 'placeholder', value)}
+                                />
+                            )}
+                            {field.type === 'select' && (
+                                <TextareaControl
+                                    label="Options (one per line)"
+                                    value={field.options}
+                                    onChange={(value) => updateField(index, 'options', value)}
+                                    help="Format: value:Label"
+                                />
+                            )}
                             <ToggleControl
                                 label="Required Field"
                                 checked={field.required}
                                 onChange={(value) => updateField(index, 'required', value)}
                             />
 
-                            {(field.type === 'select' || field.type === 'radio' || field.type === 'checkbox') && (
-                                <div style={{ marginTop: '16px' }}>
+                            {/* Field Controls */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '8px',
+                                marginTop: '16px',
+                                justifyContent: 'space-between'
+                            }}>
+                                <div style={{ display: 'flex', gap: '8px' }}>
                                     <Button
+                                        isSmall
                                         variant="secondary"
-                                        onClick={() => {
-                                            const newOptions = [...(field.options || []), { label: `Option ${(field.options?.length || 0) + 1}`, value: `option_${(field.options?.length || 0) + 1}` }];
-                                            updateField(index, 'options', newOptions);
-                                        }}
-                                    >
-                                        Add Option
-                                    </Button>
-                                    {field.options?.map((opt, optIndex) => (
-                                        <div key={optIndex} style={{ display: 'flex', marginTop: '8px' }}>
-                                            <TextControl
-                                                value={opt.label}
-                                                onChange={(value) => {
-                                                    const newOptions = [...field.options];
-                                                    newOptions[optIndex].label = value;
-                                                    updateField(index, 'options', newOptions);
-                                                }}
-                                            />
-                                            <Button
-                                                isDestructive
-                                                onClick={() => {
-                                                    const newOptions = field.options.filter((_, i) => i !== optIndex);
-                                                    updateField(index, 'options', newOptions);
-                                                }}
-                                                style={{ marginLeft: '8px' }}
-                                            >
-                                                Remove
-                                            </Button>
-                                        </div>
-                                    ))}
+                                        disabled={index === 0}
+                                        onClick={() => moveField(index, index - 1)}
+                                        icon="arrow-up-alt2"
+                                        label="Move Up"
+                                    />
+                                    <Button
+                                        isSmall
+                                        variant="secondary"
+                                        disabled={index === fields.length - 1}
+                                        onClick={() => moveField(index, index + 1)}
+                                        icon="arrow-down-alt2"
+                                        label="Move Down"
+                                    />
                                 </div>
-                            )}
-
-                            <div style={{ display: 'flex', marginTop: '16px' }}>
                                 <Button
-                                    variant="secondary"
-                                    onClick={() => moveField(index, 'up')}
-                                    disabled={index === 0}
-                                >
-                                    Move Up
-                                </Button>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => moveField(index, 'down')}
-                                    disabled={index === formFields.length - 1}
-                                    style={{ marginLeft: '8px' }}
-                                >
-                                    Move Down
-                                </Button>
-                                <Button
+                                    isSmall
                                     isDestructive
+                                    variant="secondary"
                                     onClick={() => removeField(index)}
-                                    style={{ marginLeft: '8px' }}
-                                >
-                                    Remove
-                                </Button>
+                                    icon="trash"
+                                    label="Remove"
+                                />
                             </div>
                         </PanelBody>
                     ))}
                 </PanelBody>
             </InspectorControls>
 
-            <form className={`needs-validation ${formLayout === 'horizontal' ? 'row g-3' : ''}`} noValidate>
-                {formFields.map((field, index) => (
-                    <div key={field.id} className={`mb-3 ${formLayout === 'horizontal' ? 'col-md-6' : ''}`}>
-                        {formLayout === 'floating' ? (
-                            <div className="form-floating">
-                                {renderFieldInput(field, index)}
-                                <label>{field.label}{field.required && '*'}</label>
-                            </div>
-                        ) : (
-                            <>
-                                <label className={`form-label ${formLayout === 'horizontal' ? 'col-form-label' : ''}`}>
-                                    {field.label}{field.required && '*'}
-                                </label>
-                                {renderFieldInput(field, index)}
-                            </>
+            <form className={`${formClass}`.trim()} id={formId}>
+                {fields.map((field, index) => (
+                    <div key={index} className="mb-3">
+                        {(field.type !== 'checkbox' && field.type !== 'radio') && (
+                            <label htmlFor={field.id} className="form-label">
+                                {field.label}
+                                {field.required && <span className="text-danger">*</span>}
+                            </label>
                         )}
-                        {field.helpText && (
-                            <div className="form-text">{field.helpText}</div>
-                        )}
+                        {renderFieldPreview(field, index)}
                     </div>
                 ))}
-
                 <button type="submit" className="btn btn-primary">
                     {submitText}
                 </button>

@@ -4,9 +4,13 @@
     "title": "Bootstrap Form",
     "category": "design",
     "icon": "feedback",
-    "description": "Create responsive Bootstrap forms with various input types.",
+    "description": "A form block with submission tracking.",
     "attributes": {
         "formId": {
+            "type": "string",
+            "default": ""
+        },
+        "formClass": {
             "type": "string",
             "default": ""
         },
@@ -14,34 +18,18 @@
             "type": "string",
             "default": "post"
         },
-        "formAction": {
-            "type": "string",
-            "default": ""
-        },
-        "formLayout": {
-            "type": "string",
-            "default": "vertical"
-        },
-        "formFields": {
+        "fields": {
             "type": "array",
-            "default": [
-                {
-                    "type": "text",
-                    "label": "Name",
-                    "name": "name",
-                    "required": false,
-                    "placeholder": "Enter your name",
-                    "helpText": ""
-                }
-            ]
+            "default": []
         },
         "submitText": {
             "type": "string",
             "default": "Submit"
+        },
+        "successMessage": {
+            "type": "string",
+            "default": "Thank you! Your submission has been received."
         }
-    },
-    "supports": {
-        "html": false
     },
     "editorScript": "file:./build/index.js",
     "editorStyle": "file:./editor.css",

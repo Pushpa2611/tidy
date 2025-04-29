@@ -58,13 +58,45 @@ function tidy_enqueue_editor_assets() {
 }
 add_action('admin_init', 'tidy_enqueue_editor_assets');
 
-function tidy_enqueue_form_validation() {
-    wp_enqueue_script(
-        'tidy-form-validation',
-        get_template_directory_uri() . '/assets/js/form-validation.js',
-        array(),
-        filemtime(get_template_directory() . '/assets/js/form-validation.js'),
-        true
-    );
+function create_form_submissions_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'form_submissions';
+    
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        form_id varchar(100) NOT NULL,
+        form_data longtext NOT NULL,
+        submitted_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
 }
-add_action('wp_enqueue_scripts', 'tidy_enqueue_form_validation');
+register_activation_hook(__FILE__, 'create_form_submissions_table');
+
+// add_action('wp_enqueue_scripts', 'enqueue_form_scripts');
+
+// function enqueue_form_scripts() {
+//     wp_enqueue_script(
+//         'form-submission',
+//         get_template_directory_uri() . '/blocks/bootstrap-form/src/form-submission.js',
+//         array('jquery'),
+//         filemtime(get_template_directory() . '/blocks/bootstrap-form/src/form-submission.js'),
+//         true
+//     );
+    
+//     wp_localize_script('form-submission', 'wpApiSettings', array(
+//         'ajaxurl' => admin_url('admin-ajax.php'),
+//         'nonce' => wp_create_nonce('wp_rest')
+//     ));
+// }
+
+// Include form block files
+function tidy_forms_include_block_files() {
+    include_once get_template_directory() . '/blocks/bootstrap-form/submissions.php';
+    include_once get_template_directory() . '/blocks/bootstrap-form/process-form.php';
+}
+add_action('init', 'tidy_forms_include_block_files');
