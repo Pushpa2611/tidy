@@ -1,0 +1,9 @@
+/* Style the list for front-end rendering */
+.list-group {
+  padding: 0;
+}
+
+.list-group-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+}

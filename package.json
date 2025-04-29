@@ -2,13 +2,26 @@
   "name": "tidy",
   "version": "1.0.0",
   "scripts": {
-  "build:current-year": "wp-scripts build ./blocks/current-year/src/index.js --output-path=./blocks/current-year/build",
-  "start:current-year": "wp-scripts start ./blocks/current-year/src/index.js --output-path=./blocks/current-year/build",
-  "build:copyright": "wp-scripts build ./blocks/copyright-date/src/index.js --output-path=./blocks/copyright-date/build",
-  "start:copyright": "wp-scripts start ./blocks/copyright-date/src/index.js --output-path=./blocks/copyright-date/build",
-  "build": "npm run build:current-year && npm run build:copyright",
-  "start": "npm run start:current-year & npm run start:copyright"
-},
+    "build:current-year": "wp-scripts build ./blocks/current-year/src/index.js --output-path=./blocks/current-year/build",
+    "start:current-year": "wp-scripts start ./blocks/current-year/src/index.js --output-path=./blocks/current-year/build",
+    "build:copyright": "wp-scripts build ./blocks/copyright-date/src/index.js --output-path=./blocks/copyright-date/build",
+    "start:copyright": "wp-scripts start ./blocks/copyright-date/src/index.js --output-path=./blocks/copyright-date/build",
+    "build:bootstrap-button": "wp-scripts build ./blocks/bootstrap-button/src/index.js --output-path=./blocks/bootstrap-button/build",
+    "start:bootstrap-button": "wp-scripts start ./blocks/bootstrap-button/src/index.js --output-path=./blocks/bootstrap-button/build",
+    "build:custom-list": "wp-scripts build ./blocks/custom-list/src/index.js --output-path=./blocks/custom-list/build",
+    "start:custom-list": "wp-scripts start ./blocks/custom-list/src/index.js --output-path=./blocks/custom-list/build",
+    "build:accordion": "wp-scripts build ./blocks/accordion/src/index.js --output-path=./blocks/accordion/build",
+    "start:accordion": "wp-scripts start ./blocks/accordion/src/index.js --output-path=./blocks/accordion/build",
+   
+    "build:badge": "wp-scripts build ./blocks/badge/src/index.js --output-path=./blocks/badge/build",
+    "start:badge": "wp-scripts start ./blocks/badge/src/index.js --output-path=./blocks/badge/build",
+    "build:bootstrap-tabs": "wp-scripts build ./blocks/bootstrap-tabs/src/index.js --output-path=./blocks/bootstrap-tabs/build",
+    "start:bootstrap-tabs": "wp-scripts start ./blocks/bootstrap-tabs/src/index.js --output-path=./blocks/bootstrap-tabs/build",
+    "build:bootstrap-form": "wp-scripts build ./blocks/bootstrap-form/src/index.js --output-path=./blocks/bootstrap-form/build",
+    "start:bootstrap-form": "wp-scripts start ./blocks/bootstrap-form/src/index.js --output-path=./blocks/bootstrap-form/build",
+    "build": "npm run build:current-year && npm run build:copyright && npm run build:bootstrap-button && npm run build:custom-list && npm run build:accordion  && npm run build:badge && npm run build:bootstrap-tabs && npm run build:bootstrap-form",
+    "start": "npm run start:current-year & npm run start:copyright & npm run start:bootstrap-button & npm run start:custom-list & npm run start:accordion & npm run start:accordion & npm run start:badge & npm run start:bootstrap-tabs & npm run start:bootstrap-form"
+  },
   "devDependencies": {
     "@wordpress/blocks": "^12.0.0",
     "@wordpress/scripts": "^27.0.0"

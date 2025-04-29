@@ -1,0 +1,27 @@
+{
+    "apiVersion": 2,
+    "name": "tidy/list-block",
+    "title": "Custom List Block",
+    "category": "widgets",
+    "icon": "list-view",
+    "attributes": {
+        "listItems": {
+            "type": "array",
+            "default": [
+                { "content": "An item", "className": "" },
+                { "content": "A second item", "className": "" },
+                { "content": "A third item", "className": "" }
+            ],
+            "items": {
+                "type": "object",
+                "properties": {
+                    "content": { "type": "string" },
+                    "className": { "type": "string" }
+                }
+            }
+        }
+    },
+    "editorScript": "file:./build/index.js",
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css"
+}

@@ -1,0 +1,35 @@
+{
+    "apiVersion": 2,
+    "name": "tidy/accordion",
+    "title": "Bootstrap Accordion",
+    "category": "design",
+    "icon": "editor-justify",
+    "attributes": {
+        "items": {
+            "type": "array",
+            "default": [
+                { 
+                    "title": "First Accordion Item",
+                    "content": "Content for first item",
+                    "isOpen": false
+                },
+                { 
+                    "title": "Second Accordion Item", 
+                    "content": "Content for second item",
+                    "isOpen": false
+                }
+            ]
+        },
+        "accordionId": {
+            "type": "string",
+            "default": ""
+        },
+        "flush": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "editorScript": "file:./build/index.js",
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css"
+}

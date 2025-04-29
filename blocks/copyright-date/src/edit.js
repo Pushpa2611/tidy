@@ -2,7 +2,7 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl, TextControl } from '@wordpress/components';
 
 export default function Edit({ attributes, setAttributes }) {
-    const { startingYear, showStartingYear } = attributes;
+    const { startingYear, showStartingYear, text } = attributes;
     const currentYear = new Date().getFullYear();
 
     return (
@@ -12,9 +12,7 @@ export default function Edit({ attributes, setAttributes }) {
                     <ToggleControl
                         label="Show starting year"
                         checked={showStartingYear}
-                        onChange={() =>
-                            setAttributes({ showStartingYear: !showStartingYear })
-                        }
+                        onChange={() => setAttributes({ showStartingYear: !showStartingYear })}
                     />
                     {showStartingYear && (
                         <TextControl
@@ -23,12 +21,16 @@ export default function Edit({ attributes, setAttributes }) {
                             onChange={(val) => setAttributes({ startingYear: val })}
                         />
                     )}
+                    <TextControl
+                        label="Text Content"
+                        value={text}
+                        onChange={(val) => setAttributes({ text: val })}
+                    />
                 </PanelBody>
             </InspectorControls>
+
             <p>
-                {showStartingYear
-                    ? `${startingYear}-${currentYear}`
-                    : currentYear}
+                {showStartingYear ? `${startingYear}-${currentYear}` : currentYear} — {text}
             </p>
         </div>
     );

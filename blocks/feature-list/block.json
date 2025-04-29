@@ -1,0 +1,52 @@
+{
+    "apiVersion": 2,
+    "name": "tidy/feature-list",
+    "title": "Feature List",
+    "category": "design",
+    "icon": "star-filled",
+    "description": "Display a list of features with icons and descriptions",
+    "attributes": {
+      "features": {
+        "type": "array",
+        "default": [
+            {
+            "icon": "star-filled",
+            "title": "Feature Title",
+            "content": "Feature description text goes here",
+            "className": "",
+            "customIcon": ""
+            }
+        ],
+        "items": {
+            "type": "object",
+            "properties": {
+            "icon": { "type": "string" },
+            "title": { "type": "string" },
+            "content": { "type": "string" },
+            "className": { "type": "string" },
+            "customIcon": { "type": "string" }
+            }
+        }
+        },
+      "columns": {
+        "type": "number",
+        "default": 3
+      }
+    },
+    "supports": {
+      "html": false,
+      "align": ["wide", "full"],
+      "color": {
+        "background": true,
+        "text": true
+      },
+      "spacing": {
+        "padding": true,
+        "margin": true
+      }
+    },
+    "editorScript": "file:./build/index.js",
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css",
+    "render": "file:./render.php"
+  }

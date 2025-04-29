@@ -1,0 +1,29 @@
+{
+    "apiVersion": 2,
+    "name": "tidy/bootstrap-button",
+    "title": "Bootstrap Button",
+    "category": "widgets",
+    "icon": "button",
+    "description": "A customizable Bootstrap button block.",
+    "attributes": {
+        "label": {
+            "type": "string",
+            "default": "Click Me"
+        },
+        "buttonStyle": {
+            "type": "string",
+            "default": "primary"
+        },
+        "buttonType": {
+            "type": "string",
+            "default": "button"
+        },
+        "href": {
+            "type": "string",
+            "default": "#"
+        }
+    },
+    "editorScript": "file:./build/index.js",
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css"
+}

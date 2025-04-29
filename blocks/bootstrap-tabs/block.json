@@ -1,0 +1,39 @@
+{
+    "apiVersion": 2,
+    "name": "tidy/bootstrap-tabs",
+    "title": "Bootstrap Tabs",
+    "category": "design",
+    "icon": "excerpt-view",
+    "description": "A customizable Bootstrap tabs block with InnerBlocks support.",
+    "attributes": {
+        "tabs": {
+            "type": "array",
+            "default": [
+                {
+                    "title": "Tab 1",
+                    "slug": "tab-1",
+                    "active": true
+                },
+                {
+                    "title": "Tab 2",
+                    "slug": "tab-2",
+                    "active": false
+                }
+            ]
+        },
+        "tabId": {
+            "type": "string",
+            "default": ""
+        },
+        "variant": {
+            "type": "string",
+            "default": "tabs"
+        }
+    },
+    "providesContext": {
+        "tidy/bootstrap-tabs/tabId": "tabId"
+    },
+    "editorScript": "file:./build/index.js",
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css"
+}

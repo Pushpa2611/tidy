@@ -1,0 +1,28 @@
+{
+    "apiVersion": 2,
+    "name": "tidy/badge",
+    "title": "Bootstrap Badge",
+    "category": "design",
+    "icon": "tag",
+    "attributes": {
+        "content": {
+            "type": "string",
+            "default": "Badge"
+        },
+        "style": {
+            "type": "string",
+            "default": "primary"
+        },
+        "pill": {
+            "type": "boolean",
+            "default": false
+        },
+        "link": {
+            "type": "string",
+            "default": ""
+        }
+    },
+    "editorScript": "file:./build/index.js",
+    "editorStyle": "file:./build/index.css",
+    "style": "file:./build/style-index.css"
+}

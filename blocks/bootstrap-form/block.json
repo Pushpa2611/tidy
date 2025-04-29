@@ -1,0 +1,49 @@
+{
+    "apiVersion": 2,
+    "name": "tidy/bootstrap-form",
+    "title": "Bootstrap Form",
+    "category": "design",
+    "icon": "feedback",
+    "description": "Create responsive Bootstrap forms with various input types.",
+    "attributes": {
+        "formId": {
+            "type": "string",
+            "default": ""
+        },
+        "formMethod": {
+            "type": "string",
+            "default": "post"
+        },
+        "formAction": {
+            "type": "string",
+            "default": ""
+        },
+        "formLayout": {
+            "type": "string",
+            "default": "vertical"
+        },
+        "formFields": {
+            "type": "array",
+            "default": [
+                {
+                    "type": "text",
+                    "label": "Name",
+                    "name": "name",
+                    "required": false,
+                    "placeholder": "Enter your name",
+                    "helpText": ""
+                }
+            ]
+        },
+        "submitText": {
+            "type": "string",
+            "default": "Submit"
+        }
+    },
+    "supports": {
+        "html": false
+    },
+    "editorScript": "file:./build/index.js",
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css"
+}

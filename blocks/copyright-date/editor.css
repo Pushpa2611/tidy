@@ -1,0 +1,7 @@
+/* blocks/copyright-date/editor.css */
+.wp-block-tidy-copyright-date {
+  font-size: 14px;
+  color: #e73434;
+  text-align: center;
+  padding: 10px 0;
+}

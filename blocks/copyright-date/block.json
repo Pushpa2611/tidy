@@ -1,23 +1,23 @@
-
 {
   "apiVersion": 2,
   "name": "tidy/copyright-date",
   "title": "Copyright Date",
   "category": "text",
   "attributes": {
-  "startingYear": {
-    "type": "string",
-    "default": "2017"
+      "startingYear": {
+          "type": "string",
+          "default": "2017"
+      },
+      "showStartingYear": {
+          "type": "boolean",
+          "default": true
+      },
+      "text": {
+          "type": "string",
+          "default": "All rights reserved."
+      }
   },
-  "showStartingYear": {
-    "type": "boolean",
-    "default": true
-  },
-  "text": {
-    "type": "string",
-    "default": "All rights reserved."
-  }
-},
   "editorScript": "file:./build/index.js",
-  "render": "file:./render.php"
+  "style": "file:./style.css",
+  "editorStyle": "file:./editor.css"
 }

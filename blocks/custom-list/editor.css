@@ -1,0 +1,10 @@
+/* Style the list for block editor */
+.list-group {
+  padding: 0;
+  list-style: none;
+}
+
+.list-group-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
