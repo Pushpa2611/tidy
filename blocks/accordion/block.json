@@ -11,11 +11,9 @@
                 { 
                     "title": "First Accordion Item",
                     "content": "Content for first item",
-                    "isOpen": false
-                },
-                { 
-                    "title": "Second Accordion Item", 
-                    "content": "Content for second item",
+                    "imageUrl": "",
+                    "imageId": "",
+                    "imageAlt": "",
                     "isOpen": false
                 }
             ]

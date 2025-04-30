@@ -1,6 +1,7 @@
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, Button, TextControl, TextareaControl, ToggleControl } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
+import { arrowUp, arrowDown, trash } from '@wordpress/icons';
 
 export default function Edit({ attributes, setAttributes }) {
     const { items, accordionId, flush } = attributes;
@@ -32,10 +33,26 @@ export default function Edit({ attributes, setAttributes }) {
                 }
             ]
         });
+        setExpandedPanel(items.length); // Expand the new item
     };
 
     const removeItem = (index) => {
         const newItems = items.filter((_, i) => i !== index);
+        setAttributes({ items: newItems });
+        setExpandedPanel(null);
+    };
+
+    const moveItemUp = (index) => {
+        if (index === 0) return;
+        const newItems = [...items];
+        [newItems[index], newItems[index - 1]] = [newItems[index - 1], newItems[index]];
+        setAttributes({ items: newItems });
+    };
+
+    const moveItemDown = (index) => {
+        if (index === items.length - 1) return;
+        const newItems = [...items];
+        [newItems[index], newItems[index + 1]] = [newItems[index + 1], newItems[index]];
         setAttributes({ items: newItems });
     };
 
@@ -59,7 +76,7 @@ export default function Edit({ attributes, setAttributes }) {
                     <Button
                         variant="primary"
                         onClick={addItem}
-                        style={{ margin: '16px 0' }}
+                        style={{ margin: '16px 0', width: '100%' }}
                     >
                         Add Accordion Item
                     </Button>
@@ -67,11 +84,42 @@ export default function Edit({ attributes, setAttributes }) {
                     {items.map((item, index) => (
                         <PanelBody
                             key={index}
-                            title={`Item ${index + 1}`}
+                            title={`Item ${index + 1}: ${item.title || 'Untitled'}`}
                             initialOpen={false}
                             opened={expandedPanel === index}
                             onToggle={() => togglePanel(index)}
                         >
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                marginBottom: '12px'
+                            }}>
+                                <div>
+                                    <Button
+                                        icon={arrowUp}
+                                        onClick={() => moveItemUp(index)}
+                                        disabled={index === 0}
+                                        label="Move up"
+                                        showTooltip
+                                    />
+                                    <Button
+                                        icon={arrowDown}
+                                        onClick={() => moveItemDown(index)}
+                                        disabled={index === items.length - 1}
+                                        label="Move down"
+                                        showTooltip
+                                        style={{ marginLeft: '4px' }}
+                                    />
+                                </div>
+                                <Button
+                                    icon={trash}
+                                    onClick={() => removeItem(index)}
+                                    label="Remove item"
+                                    showTooltip
+                                    isDestructive
+                                />
+                            </div>
+
                             <TextControl
                                 label="Item Title"
                                 value={item.title}
@@ -87,13 +135,6 @@ export default function Edit({ attributes, setAttributes }) {
                                 checked={item.isOpen}
                                 onChange={(value) => updateItem(index, 'isOpen', value)}
                             />
-                            <Button
-                                isDestructive
-                                onClick={() => removeItem(index)}
-                                style={{ marginTop: '8px' }}
-                            >
-                                Remove Item
-                            </Button>
                         </PanelBody>
                     ))}
                 </PanelBody>

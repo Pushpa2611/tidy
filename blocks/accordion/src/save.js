@@ -26,7 +26,14 @@ export default function Save({ attributes }) {
                             data-bs-parent={`#${accordionId}`}
                         >
                             <div className="accordion-body">
-                                {item.content || 'Accordion content...'}
+                                {item.imageUrl && (
+                                    <img
+                                        src={item.imageUrl}
+                                        alt={item.imageAlt}
+                                        className="img-fluid mb-3"
+                                    />
+                                )}
+                                <div dangerouslySetInnerHTML={{ __html: item.content }} />
                             </div>
                         </div>
                     </div>

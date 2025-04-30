@@ -12,10 +12,12 @@ function tidy_register_blocks() {
     register_block_type(__DIR__ . '/blocks/bootstrap-button');
     register_block_type(__DIR__ . '/blocks/custom-list');
     register_block_type(__DIR__ . '/blocks/accordion');
+    register_block_type(__DIR__ . '/blocks/accordion-item');
     register_block_type(__DIR__ . '/blocks/feature-list');
     register_block_type(__DIR__ . '/blocks/badge');
     register_block_type(__DIR__ . '/blocks/bootstrap-tabs');
     register_block_type(__DIR__ . '/blocks/bootstrap-form');
+    
 }
 add_action('init', 'tidy_register_blocks');
 

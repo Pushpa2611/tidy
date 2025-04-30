@@ -12,7 +12,6 @@
     "start:custom-list": "wp-scripts start ./blocks/custom-list/src/index.js --output-path=./blocks/custom-list/build",
     "build:accordion": "wp-scripts build ./blocks/accordion/src/index.js --output-path=./blocks/accordion/build",
     "start:accordion": "wp-scripts start ./blocks/accordion/src/index.js --output-path=./blocks/accordion/build",
-   
     "build:badge": "wp-scripts build ./blocks/badge/src/index.js --output-path=./blocks/badge/build",
     "start:badge": "wp-scripts start ./blocks/badge/src/index.js --output-path=./blocks/badge/build",
     "build:bootstrap-tabs": "wp-scripts build ./blocks/bootstrap-tabs/src/index.js --output-path=./blocks/bootstrap-tabs/build",
@@ -24,6 +23,7 @@
   },
   "devDependencies": {
     "@wordpress/blocks": "^12.0.0",
+    "@wordpress/icons": "^10.22.0",
     "@wordpress/scripts": "^27.0.0"
   }
 }
